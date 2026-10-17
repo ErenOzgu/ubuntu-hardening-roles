@@ -24,7 +24,7 @@
 
 # The handler only runs when the file changed; this catches rules that were cleared with "auditctl -D".
 - name: Check that the rules are loaded
-  ansible.builtin.shell: set -o pipefail && auditctl -l | grep -q -- '-k identity'
+  ansible.builtin.shell: set -o pipefail && auditctl -l | grep -Eq -- '(-k |key=)identity'
   args:
     executable: /bin/bash
   register: auditd_loaded

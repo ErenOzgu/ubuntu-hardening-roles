@@ -33,17 +33,16 @@ jq -r '.results[] | select(.status == "FAIL") | "  \(.id)"' before.json | head -
 [ "$fails" -ge "$MIN_VANILLA_FAILS" ] || die "the audit only found $fails problems on an unhardened machine"
 
 phase "2. lockout guard"
-if sudo find /root /home -name authorized_keys -size +0 2>/dev/null | grep -q .; then
-  echo "this machine already has authorized_keys files, so the guard would not trigger: skipping"
-else
-  if out="$("${PLAY[@]}" 2>&1)"; then
-    printf '%s\n' "$out"
-    die "the playbook went ahead although nobody has an authorized_keys file"
-  fi
-  grep -q 'lock everybody out' <<<"$out" || { printf '%s\n' "$out"; die "the playbook failed, but not because of the lockout guard"; }
-  [ ! -e /etc/ssh/sshd_config.d/00-hardening.conf ] || die "the guard fired too late: sshd was already reconfigured"
-  echo "refused, and nothing was reconfigured: ok"
+# Point the guard at an empty directory, so the test does not depend on which keys the machine has.
+empty_dir="$(mktemp -d)"
+if out="$("${PLAY[@]}" -e "{\"ssh_lockout_guard_paths\": [\"$empty_dir\"]}" 2>&1)"; then
+  printf '%s\n' "$out"
+  die "the playbook went ahead although nobody has an authorized_keys file"
 fi
+grep -q 'lock everybody out' <<<"$out" || { printf '%s\n' "$out"; die "the playbook failed, but not because of the lockout guard"; }
+[ ! -e /etc/ssh/sshd_config.d/00-hardening.conf ] || die "the guard fired too late: sshd was already reconfigured"
+rmdir "$empty_dir"
+echo "refused, and sshd was not reconfigured: ok"
 
 phase "3. converge, then audit"
 converge

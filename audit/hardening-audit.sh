@@ -267,8 +267,8 @@ if pkg_installed auditd; then
   ok audit-installed 'auditd is installed'
   if [ "$(systemctl is-active auditd 2>/dev/null)" = active ]; then ok audit-running 'auditd is running'; else bad audit-running 'auditd is running' 'not active'; fi
   loaded="$(auditctl -l 2>/dev/null)"
-  if grep -q -- '-k identity' <<<"$loaded"; then ok audit-rules-identity 'changes to account files are audited'; else bad audit-rules-identity 'changes to account files are audited' 'rule not loaded'; fi
-  if grep -q -- '-k time-change' <<<"$loaded"; then ok audit-rules-time 'changes to the clock are audited'; else bad audit-rules-time 'changes to the clock are audited' 'rule not loaded'; fi
+  if grep -Eq -- '(-k |key=)identity' <<<"$loaded"; then ok audit-rules-identity 'changes to account files are audited'; else bad audit-rules-identity 'changes to account files are audited' 'rule not loaded'; fi
+  if grep -Eq -- '(-k |key=)time-change' <<<"$loaded"; then ok audit-rules-time 'changes to the clock are audited'; else bad audit-rules-time 'changes to the clock are audited' 'rule not loaded'; fi
   if grep -rqs -- '-k identity' /etc/audit/rules.d/; then ok audit-rules-persisted 'the rules survive a reboot'; else bad audit-rules-persisted 'the rules survive a reboot' 'nothing in /etc/audit/rules.d'; fi
 else
   bad audit-installed 'auditd is installed' 'package missing'

@@ -9,9 +9,7 @@
 
 - name: Look for authorized_keys files
   ansible.builtin.find:
-    paths:
-      - /root
-      - /home
+    paths: "{{ ssh_lockout_guard_paths }}"
     patterns: authorized_keys
     recurse: true
     depth: 3
@@ -25,7 +23,8 @@
     that:
       - ssh_authorized_keys.matched > 0
     fail_msg: >-
-      Password logins would be switched off, but no non-empty authorized_keys file exists under /root or /home.
+      Password logins would be switched off, but there is no non-empty authorized_keys file under
+      {{ ssh_lockout_guard_paths | join(' or ') }}.
       Install a public key first, or set ssh_lockout_guard to false if you know what you are doing.
     quiet: true
   when: (ssh_lockout_guard | bool) and not (ssh_password_authentication | bool)

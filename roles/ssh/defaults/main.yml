@@ -37,3 +37,6 @@ ssh_macs:
 
 # Refuse to switch password logins off on a host where nobody has an authorized_keys file.
 ssh_lockout_guard: true
+ssh_lockout_guard_paths:
+  - /root
+  - /home
