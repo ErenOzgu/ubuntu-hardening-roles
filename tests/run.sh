@@ -59,7 +59,9 @@ mutation() {
   local id="$1" cmd="$2" group="${1%%-*}"
   printf '\n-- %s: %s\n' "$id" "$cmd"
   sudo bash -c "$cmd"
-  sudo "$AUDIT" --json --only "$group" | jq -e --arg id "$id" '.results[] | select(.id == $id and .status == "FAIL")' > /dev/null \
+  # The audit exits 1 when something fails, which is the point here, so do not let pipefail see it.
+  report="$(sudo "$AUDIT" --json --only "$group" || true)"
+  jq -e --arg id "$id" '.results[] | select(.id == $id and .status == "FAIL")' <<<"$report" > /dev/null \
     || die "$id was not reported after: $cmd"
   echo "audit reports $id as FAIL"
   converge > /dev/null || die "converge failed while repairing $id"
