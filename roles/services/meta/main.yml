@@ -1,0 +1,17 @@
+---
+galaxy_info:
+  role_name: services
+  author: Eren Özgü
+  description: Remove insecure legacy packages and disable unneeded services
+  license: MIT
+  min_ansible_version: "2.15"
+  platforms:
+    - name: Ubuntu
+      versions:
+        - jammy
+        - noble
+  galaxy_tags:
+    - hardening
+    - security
+    - ubuntu
+dependencies: []

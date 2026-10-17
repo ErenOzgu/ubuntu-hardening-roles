@@ -1,0 +1,9 @@
+---
+- name: Reload systemd
+  ansible.builtin.systemd:
+    daemon_reload: true
+
+- name: Reload the firewall
+  # Does nothing while the unit is not running yet; the "Enable and start" task loads it then.
+  ansible.builtin.command: systemctl try-reload-or-restart hardening-firewall.service  # noqa: command-instead-of-module
+  changed_when: true

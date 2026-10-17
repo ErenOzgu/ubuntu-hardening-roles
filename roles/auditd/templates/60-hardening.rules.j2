@@ -1,0 +1,28 @@
+# Managed by Ansible (ubuntu-hardening-roles). Local changes will be overwritten.
+# Appended to the package's own rules (buffer size, failure mode) by augenrules.
+
+# Who can log in and what they can do
+-w /etc/passwd -p wa -k identity
+-w /etc/group -p wa -k identity
+-w /etc/shadow -p wa -k identity
+-w /etc/gshadow -p wa -k identity
+-w /etc/sudoers -p wa -k scope
+-w /etc/sudoers.d/ -p wa -k scope
+
+# How they can log in
+-w /etc/ssh/sshd_config -p wa -k sshd
+-w /etc/ssh/sshd_config.d/ -p wa -k sshd
+
+# The clock, because logs are only evidence if the time is right
+-a always,exit -F arch=b64 -S adjtimex,settimeofday,clock_settime -k time-change
+
+# Kernel modules being loaded or removed
+-a always,exit -F arch=b64 -S init_module,finit_module,delete_module -k modules
+
+# Mounts done by real users
+-a always,exit -F arch=b64 -S mount -F auid>=1000 -F auid!=4294967295 -k mounts
+{% if auditd_immutable | bool %}
+
+# Lock the configuration until the next reboot.
+-e 2
+{% endif %}

@@ -1,0 +1,42 @@
+---
+name: ci
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  lint:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install ansible-core==2.21.5 ansible-lint==26.10.1 yamllint
+      - run: yamllint .
+      - run: ansible-lint
+      - run: ansible-playbook --syntax-check -i localhost, site.yml
+      - run: shellcheck -x audit/hardening-audit.sh tests/run.sh
+
+  # Real machines, not containers: the roles change sshd, sysctl, the firewall, auditd and apt,
+  # and the audit script reads the result back. tests/run.sh explains each phase.
+  converge:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-22.04, ubuntu-24.04]
+    name: converge and audit (${{ matrix.os }})
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install ansible-core==2.21.5
+      - run: tests/run.sh

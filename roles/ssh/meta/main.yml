@@ -1,0 +1,17 @@
+---
+galaxy_info:
+  role_name: ssh
+  author: Eren Özgü
+  description: Hardened sshd configuration as a drop-in, with a lockout guard
+  license: MIT
+  min_ansible_version: "2.15"
+  platforms:
+    - name: Ubuntu
+      versions:
+        - jammy
+        - noble
+  galaxy_tags:
+    - hardening
+    - security
+    - ubuntu
+dependencies: []

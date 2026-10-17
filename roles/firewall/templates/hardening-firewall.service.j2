@@ -1,0 +1,15 @@
+# Managed by Ansible (ubuntu-hardening-roles).
+[Unit]
+Description=Hardening firewall (nftables table inet hardening)
+Wants=network-pre.target
+Before=network-pre.target
+
+[Service]
+Type=oneshot
+RemainAfterExit=yes
+ExecStart=/usr/sbin/nft -f /etc/hardening-firewall.nft
+ExecReload=/usr/sbin/nft -f /etc/hardening-firewall.nft
+ExecStop=-/usr/sbin/nft delete table inet hardening
+
+[Install]
+WantedBy=multi-user.target

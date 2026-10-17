@@ -1,0 +1,10 @@
+---
+accounts_pass_max_days: 365
+accounts_pass_min_days: 1
+accounts_pass_warn_age: 7
+accounts_umask: "027"
+accounts_home_mode: "0750"
+accounts_pwquality_minlen: 14
+accounts_pwquality_minclass: 3
+accounts_pwquality_maxrepeat: 3
+accounts_disable_core_dumps: true

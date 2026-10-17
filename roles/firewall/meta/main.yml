@@ -1,0 +1,17 @@
+---
+galaxy_info:
+  role_name: firewall
+  author: Eren Özgü
+  description: Default-drop inbound firewall in its own nftables table
+  license: MIT
+  min_ansible_version: "2.15"
+  platforms:
+    - name: Ubuntu
+      versions:
+        - jammy
+        - noble
+  galaxy_tags:
+    - hardening
+    - security
+    - ubuntu
+dependencies: []

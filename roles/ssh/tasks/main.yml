@@ -1,0 +1,59 @@
+---
+- name: Install the OpenSSH server
+  ansible.builtin.apt:
+    name: openssh-server
+    state: present
+    update_cache: true
+    cache_valid_time: 3600
+    lock_timeout: 300
+
+- name: Look for authorized_keys files
+  ansible.builtin.find:
+    paths:
+      - /root
+      - /home
+    patterns: authorized_keys
+    recurse: true
+    depth: 3
+    hidden: true
+    size: 1
+  register: ssh_authorized_keys
+  when: (ssh_lockout_guard | bool) and not (ssh_password_authentication | bool)
+
+- name: Refuse to lock everybody out
+  ansible.builtin.assert:
+    that:
+      - ssh_authorized_keys.matched > 0
+    fail_msg: >-
+      Password logins would be switched off, but no non-empty authorized_keys file exists under /root or /home.
+      Install a public key first, or set ssh_lockout_guard to false if you know what you are doing.
+    quiet: true
+  when: (ssh_lockout_guard | bool) and not (ssh_password_authentication | bool)
+
+- name: Install the login banner
+  ansible.builtin.copy:
+    content: "{{ ssh_banner_text }}\n"
+    dest: "{{ ssh_banner }}"
+    owner: root
+    group: root
+    mode: "0644"
+  when: ssh_banner != 'none'
+
+- name: Make sure the privilege separation directory exists for the syntax check
+  ansible.builtin.file:
+    path: /run/sshd
+    state: directory
+    owner: root
+    group: root
+    mode: "0755"
+
+# 00- sorts first, and sshd keeps the first value it sees, so this beats 50-cloud-init.conf.
+- name: Write the sshd drop-in
+  ansible.builtin.template:
+    src: 00-hardening.conf.j2
+    dest: /etc/ssh/sshd_config.d/00-hardening.conf
+    owner: root
+    group: root
+    mode: "0600"
+    validate: /usr/sbin/sshd -t -f %s
+  notify: Reload sshd

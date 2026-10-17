@@ -1,0 +1,5 @@
+# Managed by Ansible (ubuntu-hardening-roles). Local changes will be overwritten.
+{% for module in kernel_modules_disabled %}
+install {{ module }} /bin/false
+blacklist {{ module }}
+{% endfor %}

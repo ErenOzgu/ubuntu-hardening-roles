@@ -1,0 +1,13 @@
+---
+# Filesystems and protocols that are rarely needed and have a history of kernel bugs.
+# squashfs is deliberately not here: snap needs it. Add udf or usb-storage if you do not use them.
+kernel_modules_disabled:
+  - cramfs
+  - freevxfs
+  - hfs
+  - hfsplus
+  - jffs2
+  - dccp
+  - sctp
+  - rds
+  - tipc

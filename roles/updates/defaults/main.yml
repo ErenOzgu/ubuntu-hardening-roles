@@ -1,0 +1,5 @@
+---
+updates_remove_unused_dependencies: true
+updates_remove_unused_kernels: true
+updates_automatic_reboot: false
+updates_automatic_reboot_time: "03:30"

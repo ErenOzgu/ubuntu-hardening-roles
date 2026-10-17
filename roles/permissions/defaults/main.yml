@@ -1,0 +1,14 @@
+---
+# Paths that do not exist on a host are skipped. Modes are set exactly; they are the Ubuntu defaults or stricter.
+permissions_files:
+  - { path: /etc/crontab, mode: "0600", owner: root, group: root }
+  - { path: /etc/cron.hourly, mode: "0700", owner: root, group: root }
+  - { path: /etc/cron.daily, mode: "0700", owner: root, group: root }
+  - { path: /etc/cron.weekly, mode: "0700", owner: root, group: root }
+  - { path: /etc/cron.monthly, mode: "0700", owner: root, group: root }
+  - { path: /etc/cron.d, mode: "0700", owner: root, group: root }
+  - { path: /etc/ssh/sshd_config, mode: "0600", owner: root, group: root }
+  - { path: /etc/shadow, mode: "0640", owner: root, group: shadow }
+  - { path: /etc/gshadow, mode: "0640", owner: root, group: shadow }
+  - { path: /etc/passwd, mode: "0644", owner: root, group: root }
+  - { path: /etc/group, mode: "0644", owner: root, group: root }

@@ -1,0 +1,21 @@
+---
+services_remove_packages:
+  - telnet
+  - rsh-client
+  - rsh-redone-client
+  - talk
+  - ntalk
+  - nis
+
+# Disabled and stopped if they exist. Anything you actually run does not belong in this list.
+services_disable:
+  - avahi-daemon.service
+  - cups.service
+  - cups-browsed.service
+  - isc-dhcp-server.service
+  - isc-dhcp-server6.service
+  - slapd.service
+  - nfs-server.service
+  - rpcbind.service
+  - snmpd.service
+  - vsftpd.service

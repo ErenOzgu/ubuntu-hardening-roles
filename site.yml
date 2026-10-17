@@ -1,0 +1,17 @@
+---
+# ansible-playbook -i inventory.ini site.yml
+# ansible-playbook -i localhost, -c local site.yml        (the machine you are on)
+- name: Harden Ubuntu 22.04 and 24.04
+  hosts: all
+  become: true
+  # ssh goes first on purpose: if its lockout guard refuses, nothing else has been changed yet.
+  roles:
+    - ssh
+    - sysctl
+    - firewall
+    - accounts
+    - permissions
+    - auditd
+    - updates
+    - kernel_modules
+    - services

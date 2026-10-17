@@ -1,0 +1,51 @@
+---
+- name: Install nftables
+  ansible.builtin.apt:
+    name: nftables
+    state: present
+    update_cache: true
+    cache_valid_time: 3600
+    lock_timeout: 300
+
+- name: Write the rule set
+  ansible.builtin.template:
+    src: hardening.nft.j2
+    dest: /etc/hardening-firewall.nft
+    owner: root
+    group: root
+    mode: "0600"
+    validate: /usr/sbin/nft -c -f %s
+  notify: Reload the firewall
+
+- name: Install the unit that loads the rule set at boot
+  ansible.builtin.template:
+    src: hardening-firewall.service.j2
+    dest: /etc/systemd/system/hardening-firewall.service
+    owner: root
+    group: root
+    mode: "0644"
+  notify:
+    - Reload systemd
+    - Reload the firewall
+
+- name: Flush handlers so the unit exists before it is started
+  ansible.builtin.meta: flush_handlers
+
+- name: Enable and start the firewall unit
+  ansible.builtin.systemd:
+    name: hardening-firewall.service
+    enabled: true
+    state: started
+
+# The unit stays "active" after loading, so a table deleted by hand would go unnoticed.
+- name: Check that the table is really loaded
+  ansible.builtin.command: nft list table inet hardening
+  register: firewall_table
+  changed_when: false
+  failed_when: false
+
+- name: Load the table again if it is missing
+  ansible.builtin.systemd:
+    name: hardening-firewall.service
+    state: restarted
+  when: firewall_table.rc != 0

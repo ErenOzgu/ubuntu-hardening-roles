@@ -1,0 +1,4 @@
+# Managed by Ansible (ubuntu-hardening-roles). Local changes will be overwritten.
+{% for key, value in (sysctl_settings | combine(sysctl_overrides)) | dictsort %}
+{{ key }} = {{ value }}
+{% endfor %}

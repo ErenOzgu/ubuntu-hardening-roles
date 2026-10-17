@@ -1,0 +1,5 @@
+*.retry
+.ansible/
+__pycache__/
+/before.json
+/after.json

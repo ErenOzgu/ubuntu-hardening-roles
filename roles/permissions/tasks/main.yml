@@ -1,0 +1,19 @@
+---
+- name: Check which of the files exist
+  ansible.builtin.stat:
+    path: "{{ item.path }}"
+  loop: "{{ permissions_files }}"
+  loop_control:
+    label: "{{ item.path }}"
+  register: permissions_stat
+
+- name: Set owner and mode
+  ansible.builtin.file:
+    path: "{{ item.item.path }}"
+    owner: "{{ item.item.owner }}"
+    group: "{{ item.item.group }}"
+    mode: "{{ item.item.mode }}"
+  loop: "{{ permissions_stat.results }}"
+  loop_control:
+    label: "{{ item.item.path }}"
+  when: item.stat.exists

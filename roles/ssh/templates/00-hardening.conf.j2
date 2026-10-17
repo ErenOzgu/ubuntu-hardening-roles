@@ -1,0 +1,27 @@
+# Managed by Ansible (ubuntu-hardening-roles). Local changes will be overwritten.
+PermitRootLogin {{ ssh_permit_root_login }}
+PasswordAuthentication {{ 'yes' if ssh_password_authentication | bool else 'no' }}
+KbdInteractiveAuthentication no
+PubkeyAuthentication yes
+PermitEmptyPasswords no
+HostbasedAuthentication no
+PermitUserEnvironment no
+MaxAuthTries {{ ssh_max_auth_tries }}
+LoginGraceTime {{ ssh_login_grace_time }}
+MaxSessions {{ ssh_max_sessions }}
+ClientAliveInterval {{ ssh_client_alive_interval }}
+ClientAliveCountMax {{ ssh_client_alive_count_max }}
+AllowTcpForwarding {{ 'yes' if ssh_allow_tcp_forwarding | bool else 'no' }}
+AllowAgentForwarding {{ 'yes' if ssh_allow_agent_forwarding | bool else 'no' }}
+X11Forwarding {{ 'yes' if ssh_x11_forwarding | bool else 'no' }}
+LogLevel {{ ssh_log_level }}
+Banner {{ ssh_banner }}
+Ciphers {{ ssh_ciphers | join(',') }}
+KexAlgorithms {{ ssh_kex_algorithms | join(',') }}
+MACs {{ ssh_macs | join(',') }}
+{% if ssh_allow_users %}
+AllowUsers {{ ssh_allow_users | join(' ') }}
+{% endif %}
+{% if ssh_allow_groups %}
+AllowGroups {{ ssh_allow_groups | join(' ') }}
+{% endif %}

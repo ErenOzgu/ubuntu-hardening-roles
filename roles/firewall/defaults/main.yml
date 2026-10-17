@@ -1,0 +1,7 @@
+---
+# Inbound only. Outbound traffic and forwarding are left alone, so Docker, NAT and friends keep working.
+firewall_ssh_port: 22
+firewall_ssh_rate: 10/minute
+firewall_tcp_ports: []
+firewall_udp_ports: []
+firewall_allow_ping: true

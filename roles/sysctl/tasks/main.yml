@@ -1,0 +1,15 @@
+---
+- name: Write the sysctl file
+  ansible.builtin.template:
+    src: 60-hardening.conf.j2
+    dest: /etc/sysctl.d/60-hardening.conf
+    owner: root
+    group: root
+    mode: "0644"
+  notify: Apply sysctl settings
+
+# The handler only runs when the file changed. This catches someone running "sysctl -w" by hand.
+# Loading the same values again is a no-op, so it is not reported as a change.
+- name: Re-apply the settings so live drift is repaired
+  ansible.builtin.command: sysctl -e --load=/etc/sysctl.d/60-hardening.conf
+  changed_when: false

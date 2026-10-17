@@ -1,0 +1,72 @@
+---
+- name: Install libpam-pwquality
+  ansible.builtin.apt:
+    name: libpam-pwquality
+    state: present
+    update_cache: true
+    cache_valid_time: 3600
+    lock_timeout: 300
+
+- name: Set password and umask defaults for new accounts
+  ansible.builtin.lineinfile:
+    path: /etc/login.defs
+    regexp: '^#?\s*{{ item.key }}\b'
+    line: "{{ item.key }}\t{{ item.value }}"
+    state: present
+  loop:
+    - { key: PASS_MAX_DAYS, value: "{{ accounts_pass_max_days }}" }
+    - { key: PASS_MIN_DAYS, value: "{{ accounts_pass_min_days }}" }
+    - { key: PASS_WARN_AGE, value: "{{ accounts_pass_warn_age }}" }
+    - { key: UMASK, value: "{{ accounts_umask }}" }
+    - { key: HOME_MODE, value: "{{ accounts_home_mode }}" }
+  loop_control:
+    label: "{{ item.key }}"
+
+- name: Create the pwquality drop-in directory
+  ansible.builtin.file:
+    path: /etc/security/pwquality.conf.d
+    state: directory
+    owner: root
+    group: root
+    mode: "0755"
+
+- name: Set the password quality rules
+  ansible.builtin.template:
+    src: pwquality.conf.j2
+    dest: /etc/security/pwquality.conf.d/00-hardening.conf
+    owner: root
+    group: root
+    mode: "0644"
+
+- name: Switch core dumps off for every user
+  ansible.builtin.copy:
+    content: |
+      # Managed by Ansible (ubuntu-hardening-roles).
+      * hard core 0
+    dest: /etc/security/limits.d/10-hardening-core.conf
+    owner: root
+    group: root
+    mode: "0644"
+  when: accounts_disable_core_dumps | bool
+
+- name: Create the systemd-coredump drop-in directory
+  ansible.builtin.file:
+    path: /etc/systemd/coredump.conf.d
+    state: directory
+    owner: root
+    group: root
+    mode: "0755"
+  when: accounts_disable_core_dumps | bool
+
+- name: Keep systemd-coredump from storing dumps
+  ansible.builtin.copy:
+    content: |
+      # Managed by Ansible (ubuntu-hardening-roles).
+      [Coredump]
+      Storage=none
+      ProcessSizeMax=0
+    dest: /etc/systemd/coredump.conf.d/10-hardening.conf
+    owner: root
+    group: root
+    mode: "0644"
+  when: accounts_disable_core_dumps | bool

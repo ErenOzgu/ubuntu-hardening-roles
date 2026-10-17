@@ -1,0 +1,17 @@
+---
+galaxy_info:
+  role_name: accounts
+  author: Eren Özgü
+  description: Password policy, umask and core dump limits
+  license: MIT
+  min_ansible_version: "2.15"
+  platforms:
+    - name: Ubuntu
+      versions:
+        - jammy
+        - noble
+  galaxy_tags:
+    - hardening
+    - security
+    - ubuntu
+dependencies: []

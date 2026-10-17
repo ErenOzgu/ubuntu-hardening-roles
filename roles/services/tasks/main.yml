@@ -1,0 +1,18 @@
+---
+- name: Remove insecure legacy packages
+  ansible.builtin.apt:
+    name: "{{ services_remove_packages }}"
+    state: absent
+    purge: true
+    lock_timeout: 300
+
+- name: Collect the services that exist
+  ansible.builtin.service_facts:
+
+- name: Disable and stop the unneeded services
+  ansible.builtin.systemd:
+    name: "{{ item }}"
+    enabled: false
+    state: stopped
+  loop: "{{ services_disable }}"
+  when: item in ansible_facts.services

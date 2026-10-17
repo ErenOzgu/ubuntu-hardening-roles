@@ -1,0 +1,4 @@
+---
+- name: Apply sysctl settings
+  ansible.builtin.command: sysctl -e --load=/etc/sysctl.d/60-hardening.conf
+  changed_when: true

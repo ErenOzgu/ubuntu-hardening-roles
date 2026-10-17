@@ -1,0 +1,3 @@
+---
+# Set to true to lock the rules until the next reboot (-e 2). Changing a rule then needs a reboot.
+auditd_immutable: false

@@ -1,0 +1,6 @@
+// Managed by Ansible (ubuntu-hardening-roles). Local changes will be overwritten.
+// Which origins are upgraded is left to Ubuntu's own 50unattended-upgrades (security by default).
+Unattended-Upgrade::Remove-Unused-Dependencies "{{ 'true' if updates_remove_unused_dependencies | bool else 'false' }}";
+Unattended-Upgrade::Remove-Unused-Kernel-Packages "{{ 'true' if updates_remove_unused_kernels | bool else 'false' }}";
+Unattended-Upgrade::Automatic-Reboot "{{ 'true' if updates_automatic_reboot | bool else 'false' }}";
+Unattended-Upgrade::Automatic-Reboot-Time "{{ updates_automatic_reboot_time }}";

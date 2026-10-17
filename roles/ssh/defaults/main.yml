@@ -1,0 +1,39 @@
+---
+# Everything here can be overridden from the playbook or inventory.
+ssh_permit_root_login: "no"
+ssh_password_authentication: false
+ssh_max_auth_tries: 3
+ssh_login_grace_time: 30
+ssh_max_sessions: 4
+ssh_client_alive_interval: 300
+ssh_client_alive_count_max: 2
+ssh_allow_tcp_forwarding: false
+ssh_allow_agent_forwarding: false
+ssh_x11_forwarding: false
+ssh_log_level: VERBOSE
+ssh_banner: /etc/issue.net
+ssh_banner_text: "Authorized use only. Activity may be monitored and reported."
+
+# Empty lists mean "no restriction".
+ssh_allow_users: []
+ssh_allow_groups: []
+
+ssh_ciphers:
+  - chacha20-poly1305@openssh.com
+  - aes256-gcm@openssh.com
+  - aes128-gcm@openssh.com
+  - aes256-ctr
+  - aes192-ctr
+  - aes128-ctr
+ssh_kex_algorithms:
+  - curve25519-sha256
+  - curve25519-sha256@libssh.org
+  - diffie-hellman-group16-sha512
+  - diffie-hellman-group18-sha512
+ssh_macs:
+  - hmac-sha2-512-etm@openssh.com
+  - hmac-sha2-256-etm@openssh.com
+  - umac-128-etm@openssh.com
+
+# Refuse to switch password logins off on a host where nobody has an authorized_keys file.
+ssh_lockout_guard: true
