@@ -113,7 +113,7 @@ Its one side effect: it creates an empty `/run/sshd` if missing, because `sshd -
    | `apt-get install telnet` | `svc-pkg-telnet` |
    | delete the modprobe file | `mod-cramfs` |
    | `auditctl -D` | `audit-rules-identity` |
-   | delete the unattended-upgrades settings | `upd-unattended` |
+   | set the daily unattended-upgrade switch to `"0"` | `upd-unattended` |
 
 6. **The machine still works.** `sshd -t` passes and the firewall table is loaded.
 

@@ -77,7 +77,7 @@ mutation acct-pass-max-days "sed -i 's/^PASS_MAX_DAYS.*/PASS_MAX_DAYS 99999/' /e
 mutation svc-pkg-telnet "DEBIAN_FRONTEND=noninteractive apt-get install -y -q telnet"
 mutation mod-cramfs "rm /etc/modprobe.d/60-hardening.conf"
 mutation audit-rules-identity "auditctl -D"
-mutation upd-unattended "rm /etc/apt/apt.conf.d/51hardening-periodic"
+mutation upd-unattended "sed -i 's/\"1\"/\"0\"/' /etc/apt/apt.conf.d/51hardening-periodic"
 
 phase "6. the machine still works"
 sudo sshd -t && echo "sshd -t: ok"
